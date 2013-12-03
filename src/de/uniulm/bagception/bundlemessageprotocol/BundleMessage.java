@@ -17,7 +17,7 @@ public class BundleMessage {
 	private static final BundleMessage instance = new BundleMessage();
 	private BundleMessage(){}
 	
-	public BundleMessage getInstance(){
+	public static BundleMessage getInstance(){
 		return instance;
 	}
 	
