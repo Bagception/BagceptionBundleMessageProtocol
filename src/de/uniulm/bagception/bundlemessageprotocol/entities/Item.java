@@ -2,12 +2,12 @@ package de.uniulm.bagception.bundlemessageprotocol.entities;
 
 import java.util.ArrayList;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Item implements Parcelable{
+public class Item{
 
-	
 	private String name;
 	private String description;
 	private ArrayList<String> tagIDs;
@@ -35,26 +35,44 @@ public class Item implements Parcelable{
 	}
 	
 	
-	public Item(Parcel in){
-		readFromParcel(in); 
-	}
-	
-	
-	private void readFromParcel(Parcel in) {
-		name = in.readString();
-		description = in.readString();
-		tagIDs = in.readArrayList(null);
-	}
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
 
+	
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeString(name);
-		out.writeString(description);
-		out.writeStringList(tagIDs);
+	/**
+	 * converts the object to json
+	 */
+	public String toString() {
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("name", name);
+			obj.put("description", description);
+			
+			JSONArray ar = new JSONArray();
+			for (String id:tagIDs){
+				ar.put(id);
+			}
+			obj.put("tagIDs", ar);
+			return obj.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
+	
+	
+	public static Item fromJSON(JSONObject obj) throws JSONException{
+		String name = (String) obj.getString("name");
+		String description = (String) obj.getString("description");
+		JSONArray ar = obj.getJSONArray("tagIDs");
+		ArrayList<String> tagIDs = new ArrayList<String>();
+		for (int i=0;i<ar.length();i++){
+			tagIDs.add(ar.getString(i));
+		}
+		return new Item(name,description,tagIDs);
+		
+	}
+	
+	
+	
 }

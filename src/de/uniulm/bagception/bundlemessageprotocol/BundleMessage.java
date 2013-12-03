@@ -1,10 +1,9 @@
 package de.uniulm.bagception.bundlemessageprotocol;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import de.uniulm.bagception.bundlemessageprotocol.entities.Item;
 
 public class BundleMessage {
@@ -31,42 +30,25 @@ public class BundleMessage {
 		return createBundle(BUNDLE_MESSAGE.ITEM_FOUND, item);
 	}
 	
-	public Item toItemFound(Bundle b){
-		return toObject(b);
+	public Item toItemFound(Bundle b) throws JSONException{
+		JSONObject json = new JSONObject(b.getString(PAYLOAD_EXTRA));
+		return Item.fromJSON(json);
 	}
 	
 	
-	//toBundle generic
-	private Bundle createBundle(BUNDLE_MESSAGE msg,HashMap<String,Parcelable> map){
-		Bundle ret = new Bundle();
-		for (String key:map.keySet()){
-			ret.putParcelable(key, map.get(key));
-		}
-		ret.putInt(MESSAGE_TYPE_EXTRA, msg.ordinal());
-		return ret;
-	}
 	
-	private Bundle createBundle(BUNDLE_MESSAGE msg,Parcelable payload){
+	private Bundle createBundle(BUNDLE_MESSAGE msg,Object payload){
 		Bundle ret = new Bundle();
 		
-		ret.putInt(MESSAGE_TYPE_EXTRA, msg.ordinal());
-		ret.putParcelable(PAYLOAD_EXTRA, payload);
+		ret.putString(MESSAGE_TYPE_EXTRA, msg.ordinal()+"");
+		ret.putString(PAYLOAD_EXTRA, payload.toString());
 		return ret;
 	}
 	
-	private <E extends Parcelable> E toObject(Bundle b){
-		return b.getParcelable(PAYLOAD_EXTRA);
-	}
 
 	
 	
-	private Bundle createBundle(BUNDLE_MESSAGE msg,ArrayList<Parcelable> payload){
-		Bundle ret = new Bundle();
-		
-		ret.putInt(MESSAGE_TYPE_EXTRA, msg.ordinal());
-		ret.putParcelableArrayList(PAYLOAD_EXTRA, payload);
-		return ret;
-	}
+	
 	
 	/**
 	 * reads out the type-code and returns the appropriate {@link BUNDLE_MESSAGE} 
@@ -74,7 +56,7 @@ public class BundleMessage {
 	 * @return the {@link BUNDLE_MESSAGE}, {@link BUNDLE_MESSAGE.NOT_A_BUNDLE_MESSAGE} if it's not a BundleMessage
 	 */
 	public BUNDLE_MESSAGE getBundleMessageType(Bundle b){
-		int i=b.getInt(MESSAGE_TYPE_EXTRA,0);
+		int i=Integer.parseInt(b.getString(MESSAGE_TYPE_EXTRA,"0"));
 		return BUNDLE_MESSAGE.values()[i];
 	}
 	
