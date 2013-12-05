@@ -22,13 +22,17 @@ public class BundleMessage {
 	}
 	
 	public enum BUNDLE_MESSAGE{
-		NOT_A_BUNDLE_MESSAGE,ITEM_FOUND,CONTAINER_STATUS;
+		NOT_A_BUNDLE_MESSAGE,ITEM_FOUND,ITEM_NOT_FOUND,CONTAINER_STATUS;
 	}
 	
 	//Item
 	public Bundle toItemFoundBundle(Item item){
 		
 		return createBundle(BUNDLE_MESSAGE.ITEM_FOUND, item);
+	}
+	public Bundle toItemFoundNotBundle(Item item){
+		
+		return createBundle(BUNDLE_MESSAGE.ITEM_NOT_FOUND,item);
 	}
 	public Item toItemFound(Bundle b) throws JSONException{
 		JSONObject json = new JSONObject(b.getString(PAYLOAD_EXTRA));
@@ -50,7 +54,12 @@ public class BundleMessage {
 		Bundle ret = new Bundle();
 		
 		ret.putString(MESSAGE_TYPE_EXTRA, msg.ordinal()+"");
-		ret.putString(PAYLOAD_EXTRA, payload.toString());
+		if (payload != null){
+			ret.putString(PAYLOAD_EXTRA, payload.toString());
+		}else{
+			ret.putString(PAYLOAD_EXTRA, "");
+		}
+			
 		return ret;
 	}
 	

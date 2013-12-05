@@ -1,6 +1,7 @@
 package de.uniulm.bagception.bundlemessageprotocol.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +34,9 @@ public class Item{
 	public String getDescription() {
 		return description;
 	}
-	
+	public List<String> getIds(){
+		return tagIDs;
+	}
 	
 
 	
